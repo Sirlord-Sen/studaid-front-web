@@ -1,24 +1,23 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import { SignUpRequest } from './types/auth-service/auth.type';
+import { AuthService } from './services/api/auth.service';
 
 function App() {
+  const clickSignin = async (event: any) => {
+    const user: SignUpRequest = {
+      username: "DemManga",
+      email: "lordsly@gmail.com",
+      password: "dahsufhasufd",
+      firstname: "Lordfef",
+      surname: "alsdiad"
+    }
+    const auth = new AuthService()
+    console.log(await auth.signup(user))
+  }
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <button type='submit' onClick={clickSignin}>Click me</button>
     </div>
   );
 }
