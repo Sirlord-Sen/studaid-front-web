@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 import { SignUpRequest } from './types/auth-service/auth.type';
-import { AuthService } from './services/api/auth.service';
+import { AuthApiService } from './services/api/auth.service';
 
 function App() {
   const clickSignin = async (event: any) => {
@@ -12,7 +12,7 @@ function App() {
       firstname: "Lordfef",
       surname: "alsdiad"
     }
-    const auth = new AuthService()
+    const auth = new AuthApiService()
     console.log(await auth.signup(user))
   }
   return (
