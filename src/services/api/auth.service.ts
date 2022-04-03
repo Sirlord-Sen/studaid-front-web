@@ -1,9 +1,29 @@
 import { AUTHBASEURL, USERBASEURL } from "../../constants/auth.api";
-import { METHOD, RequestHandlerData, ResponseHandlerTypes, TokenType } from "../../types/api.types";
-import { UserResponse, LoginRequest, LoginResponse, LogoutResponse, SignUpRequest, ChangePasswordRequest, RefreshTokenRequest, TokensResponse, ForgotPasswordRequest, ResetPasswordRequest } from "../../types/auth-service/auth.type";
+import { 
+    METHOD, 
+    RequestHandlerData, 
+    ResponseHandlerTypes, 
+    TokenType 
+} from "../../types/api.types";
+import { 
+    UserResponse, 
+    LoginRequest, 
+    LoginResponse, 
+    LogoutResponse, 
+    SignUpRequest, 
+    ChangePasswordRequest, 
+    RefreshTokenRequest, 
+    TokensResponse, 
+    ForgotPasswordRequest, 
+    ResetPasswordRequest, 
+} from "../../types/auth-service/auth.type";
+import { StorageService } from "../storage.service";
 
 export class AuthApiService{
-    constructor(){}
+    private storage: StorageService
+    constructor(){
+        this.storage = new StorageService()
+    }
 
     private async requestHandler<T extends ResponseHandlerTypes>(request: RequestHandlerData){
         const { data, url, method } = request
@@ -31,11 +51,15 @@ export class AuthApiService{
     }
 
     public async currentUser(token: string){
-        return await this.requestHandler<UserResponse>({token, method: METHOD.GET, url: `${USERBASEURL}/347829340-1238921` })
+        const user= await this.requestHandler<UserResponse>({token, method: METHOD.GET, url: `${USERBASEURL}/347829340-1238921` })
+        this.storage.saveUserData(user)
+        return user
     }
 
     public async updateUser(data: SignUpRequest, token: string){
-        return await this.requestHandler<UserResponse>({token, data, method: METHOD.PUT, url: USERBASEURL})
+        const user = await this.requestHandler<UserResponse>({token, data, method: METHOD.PUT, url: USERBASEURL})
+        this.storage.saveTokenData(user)
+        return user
     }
 
     public async changePassword(data: ChangePasswordRequest, token: string){
@@ -43,7 +67,10 @@ export class AuthApiService{
     }
 
     public async login(data: LoginRequest){
-        return await this.requestHandler<LoginResponse>({data, method: METHOD.POST, url: `${AUTHBASEURL}/login`})
+        const logn = await this.requestHandler<LoginResponse>({data, method: METHOD.POST, url: `${AUTHBASEURL}/login`})
+        this.storage.saveUserData(logn)
+        this.storage.saveTokenData(logn)
+        return logn
     }
 
     public async logout(token: string){
@@ -51,11 +78,13 @@ export class AuthApiService{
     }
 
     public async refreshToken(data: RefreshTokenRequest){
-        return await this.requestHandler<TokensResponse>({data, method: METHOD.POST, url: `${AUTHBASEURL}/refresh-token`})
+        const tokenData = await this.requestHandler<TokensResponse>({data, method: METHOD.POST, url: `${AUTHBASEURL}/refresh-token`})
+        this.storage.saveTokenData(tokenData)
+        return tokenData
     }
 
     public async forgotPassword(data: ForgotPasswordRequest){
-        return await this.requestHandler<UserResponse>({data, method: METHOD.POST, url: `${AUTHBASEURL}/forgot-password`})
+        await this.requestHandler<UserResponse>({data, method: METHOD.POST, url: `${AUTHBASEURL}/forgot-password`})
     }
 
     public async resetPassword(data: ResetPasswordRequest){

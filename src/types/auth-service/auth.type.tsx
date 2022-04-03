@@ -3,7 +3,7 @@ import { PayloadDto } from "../api.types"
 export type AuthRequests = SignUpRequest | LoginRequest | ChangePasswordRequest | RefreshTokenRequest | ForgotPasswordRequest | ResetPasswordRequest
 export type AuthResponses = UserResponse | LoginResponse | LogoutResponse | TokensResponse
 
-class User{
+export class User{
     user: {
         id: string;
         username: string;
@@ -13,7 +13,7 @@ class User{
     }
 }
 
-class Tokens{
+export class Tokens{
     tokens: {
         tokenType: string
         expiredAt: string
