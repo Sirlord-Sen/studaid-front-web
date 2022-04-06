@@ -37,8 +37,7 @@ export class AuthApiService{
         })
         return response.json()
             .then((data: T) => {
-                if(!data.success) throw new Error(data.message)
-                console.log(data.message)
+                if(!data.success) throw (data)
                 return data.data
             })
             .catch((err:any) => {
@@ -67,10 +66,10 @@ export class AuthApiService{
     }
 
     public async login(data: LoginRequest){
-        const logn = await this.requestHandler<LoginResponse>({data, method: METHOD.POST, url: `${AUTHBASEURL}/login`})
-        this.storage.saveUserData(logn)
-        this.storage.saveTokenData(logn)
-        return logn
+        const login = await this.requestHandler<LoginResponse>({data, method: METHOD.POST, url: `${AUTHBASEURL}/login`})
+        this.storage.saveUserData(login)
+        this.storage.saveTokenData(login)
+        return login
     }
 
     public async logout(token: string){

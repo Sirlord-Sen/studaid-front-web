@@ -1,104 +1,49 @@
 import { Dispatch } from "redux";
+import { LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS } from "src/constants/auth.constants";
 import { AuthApiService } from "src/services/api/auth.service";
-import { LoginRequest, SignUpRequest } from "src/types/auth-service/auth.type";
-import {
-    SIGNUP_SUCCESS,
-    SIGNUP_FAIL,
-    LOGIN_SUCCESS,
-    LOGIN_FAIL,
-    LOGOUT,
-    SET_MESSAGE,
-} from "./types";
+import { LoginRequest } from "src/types/auth-service/auth.type";
+import { setError } from "./alert.actions";
 
-export class AuthAction{
-    private authApiService: AuthApiService
-    constructor(){
-        this.authApiService = new AuthApiService()
-    }
+// export class AuthAction{
+//     private authApiService: AuthApiService
+//     constructor(){
+//         this.authApiService = new AuthApiService()
+//     }
 
-    private async simulateRequest(action: any): Promise<void>{
-        (dispatch: Dispatch) => {
-            setTimeout(() => {
-              dispatch(action)
-            }, 500)
-          }
+//     private async simulateRequest(action: any): Promise<void>{
+//         (dispatch: Dispatch) => {
+//             setTimeout(() => {
+//               dispatch(action)
+//             }, 500)
+//           }
+//     }
+    
+    
+// }    
+
+const authApiService = new AuthApiService()
+
+export const login = (data: LoginRequest) => {
+    const request = (user: LoginRequest) => { return { type: LOGIN_REQUEST, user } }
+    const success = (data: any) => { return { type: LOGIN_SUCCESS, user: data.user } }
+    const failure = (error: any) => { return { type: LOGIN_FAILURE, user: error.message } }
+
+    return (dispatch: Dispatch) => {
+        dispatch(request(data));
+
+        authApiService.login(data)
+            .then((data) => {
+                dispatch(success(data))
+                // history.pushState('/');
+            })
+            .catch((err) => {
+                dispatch(failure(err))
+                dispatch(setError(err.message))
+            })
     }
     
-    public async login(data: LoginRequest){
-        return this.authApiService.login(data)
-            .then((response: any) => {
-                this.simulateRequest({
-                    type: LOGIN_SUCCESS,
-                });
-                this.simulateRequest({
-                    type: SET_MESSAGE,
-                    payload: response.data.message,
-                });
-                return Promise.resolve();
-            })
-    } 
-}  
-//   export const register = (data: SignUpRequest) => (dispatch: Dispatch) => {
-//       const authApiService = new AuthApiService()
-//     return authApiService.signup(data).then(
-//       (response: any) => {
-//         dispatch({
-//           type: SIGNUP_SUCCESS,
-//         });
-//         dispatch({
-//           type: SET_MESSAGE,
-//           payload: response.data.message,
-//         });
-//         return Promise.resolve();
-//       },
-//       (error) => {
-//         const message =
-//           (error.response &&
-//             error.response.data &&
-//             error.response.data.message) ||
-//           error.message ||
-//           error.toString();
-//         dispatch({
-//           type: SIGNUP_FAIL,
-//         });
-//         dispatch({
-//           type: SET_MESSAGE,
-//           payload: message,
-//         });
-//         return Promise.reject();
-//       }
-//     );
-//   };
-//   export const login = (username, password) => (dispatch) => {
-//     return AuthService.login(username, password).then(
-//       (data) => {
-//         dispatch({
-//           type: LOGIN_SUCCESS,
-//           payload: { user: data },
-//         });
-//         return Promise.resolve();
-//       },
-//       (error) => {
-//         const message =
-//           (error.response &&
-//             error.response.data &&
-//             error.response.data.message) ||
-//           error.message ||
-//           error.toString();
-//         dispatch({
-//           type: LOGIN_FAIL,
-//         });
-//         dispatch({
-//           type: SET_MESSAGE,
-//           payload: message,
-//         });
-//         return Promise.reject();
-//       }
-//     );
-//   };
-//   export const logout = () => (dispatch) => {
-//     AuthService.logout();
-//     dispatch({
-//       type: LOGOUT,
-//     });
-//   };
+}
+
+// export const logout =async (data:type) => {
+    
+// }
